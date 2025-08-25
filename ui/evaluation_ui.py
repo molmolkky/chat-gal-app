@@ -236,10 +236,39 @@ class EvaluationUI:
                     st.warning("ダウンロードするデータがないよ〜")
         
         with col2:
-            if st.button("🗑️ データ全削除", type="secondary"):
-                if st.checkbox("本当に全部消しちゃう？"):
-                    self.evaluation_service.clear_evaluation_data()
-                    st.success("データを全部消したよ〜")
+                # セッション状態で削除確認フラグを管理
+                if "show_eval_delete_confirmation" not in st.session_state:
+                    st.session_state.show_eval_delete_confirmation = False
+                
+                # 削除ボタン
+                if st.button("🗑️ データ全削除", type="secondary"):
+                    st.session_state.show_eval_delete_confirmation = True
+                    st.rerun()
+            
+        # 確認が表示されている場合（カラムの外に出す）
+        if st.session_state.show_eval_delete_confirmation:
+            st.error("⚠️ 本当に全ての評価データを削除しますか？この操作は取り消せません！")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("✅ はい、削除します", type="primary", key="confirm_eval_delete"):
+                    try:
+                        self.evaluation_service.clear_evaluation_data()
+                        
+                        # 確認フラグをリセット
+                        st.session_state.show_eval_delete_confirmation = False
+                        
+                        st.success("✅ 評価データを全部消したよ〜")
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"❌ 削除できなかった💦: {str(e)}")
+                        st.session_state.show_eval_delete_confirmation = False
+            
+            with col2:
+                if st.button("❌ やっぱりやめる", key="cancel_eval_delete"):
+                    st.session_state.show_eval_delete_confirmation = False
                     st.rerun()
     
     def render_evaluation_page(self):

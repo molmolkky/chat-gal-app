@@ -112,20 +112,43 @@ def database_management_section():
     
     if stats['has_vectorstore']:
         st.warning("⚠️ 下のボタンを押すと、全部の資料が消えちゃうよ〜")
+
+        # セッション状態で削除確認フラグを管理
+        if "show_delete_confirmation" not in st.session_state:
+            st.session_state.show_delete_confirmation = False
         
+        # 削除ボタン
         if st.button("🚨 全部削除しちゃう", type="secondary"):
-            if st.checkbox("本当に消しちゃう？元に戻せないよ〜💦"):
-                try:
-                    document_processor.clear_vectorstore()
-                    
-                    # セッション状態も更新
-                    if "vectorstore_ready" in st.session_state:
-                        del st.session_state.vectorstore_ready
-                    
-                    st.success("✅ 全部消したよ〜")
+            st.session_state.show_delete_confirmation = True
+            st.rerun()
+        # 確認が表示されている場合
+        if st.session_state.show_delete_confirmation:
+            st.error("⚠️ 本当に全ての資料を削除しますか？この操作は取り消せません！")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("✅ はい、削除します", type="primary", key="confirm_delete"):
+                    try:
+                        document_processor.clear_vectorstore()
+                        
+                        # セッション状態も更新
+                        if "vectorstore_ready" in st.session_state:
+                            del st.session_state.vectorstore_ready
+                        
+                        # 確認フラグをリセット
+                        st.session_state.show_delete_confirmation = False
+                        
+                        st.success("✅ 全部消したよ〜")
+                        st.rerun()
+                        
+                    except Exception as e:
+                        st.error(f"❌ 削除できなかった💦: {str(e)}")
+                        st.session_state.show_delete_confirmation = False
+            
+            with col2:
+                if st.button("❌ やっぱりやめる", key="cancel_delete"):
+                    st.session_state.show_delete_confirmation = False
                     st.rerun()
-                    
-                except Exception as e:
-                    st.error(f"❌ 削除できなかった💦: {str(e)}")
     else:
         st.info("消す資料がないよ〜")
