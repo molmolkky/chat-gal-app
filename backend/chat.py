@@ -5,6 +5,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 from backend.evaluation import evaluation_service
+from backend.utils.clean_text_for_llm import clean_text_for_llm
 from config import llm
 
 class ChatService:
@@ -50,8 +51,15 @@ class ChatService:
                 }
             
             # 関連文書を検索
-            context_docs = self.document_processor.search_documents(query, k=3)
-            context = "\n\n".join([doc.page_content for doc in context_docs])
+            context_docs = self.document_processor.search_documents(query)
+
+            # 文脈をクリーンアップ
+            cleaned_contexts = []
+            for doc in context_docs:
+                cleaned_content = clean_text_for_llm(doc.page_content)
+                cleaned_contexts.append(cleaned_content)
+            
+            context = "\n\n".join(cleaned_contexts)
             
             # システムプロンプトを作成
             system_message = f"""あなたは質問応答のアシスタントで、質問に対して日本のギャルのように簡単な言葉を使って説明します。絵文字もたくさん使ってください。「ギャル風に答えるね」といった前置きは不要です。いきなりギャルの言葉遣いで回答してください。
@@ -73,7 +81,7 @@ class ChatService:
             # LLMで応答生成
             response = llm.invoke(prompt.format_messages())
             ai_response = response.content if hasattr(response, 'content') else str(response)
-
+            
             # 評価用データを自動収集
             contexts = [doc.page_content for doc in context_docs]
             source_files = list(set([doc.metadata.get('source_file', '不明') for doc in context_docs]))
