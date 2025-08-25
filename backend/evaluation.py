@@ -65,7 +65,7 @@ class EvaluationService:
             # DataFrameを作成
             data = {
                 'user_input': [evaluation_item.question],
-                'answer': [evaluation_item.answer],
+                'response': [evaluation_item.answer],
                 'retrieved_contexts': [evaluation_item.contexts],
                 'reference': [evaluation_item.answer]  # 自己参照として使用
             }
