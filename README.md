@@ -11,6 +11,18 @@ ChatGALは、PDFファイルをアップロードして、その内容につい�
 - 💅 **ギャル語** で楽しくおしゃべり
 - 🌈 **Streamlit** でサクサク動く
 
+## 🖼️ アプリのスクショはこんな感じ
+
+<img width="1800" height="1004" alt="Image" src="https://github.com/user-attachments/assets/6cf6cd5e-e985-42cd-a900-85c3761b8d27" />
+
+<img width="1800" height="1004" alt="Image" src="https://github.com/user-attachments/assets/3d675ebf-5cd3-4afe-a57d-c8a6276380c9" />
+
+<img width="1800" height="1004" alt="Image" src="https://github.com/user-attachments/assets/d1cc6655-e948-4fc4-a2fd-c0dc27094e41" />
+
+<img width="1800" height="1004" alt="Image" src="https://github.com/user-attachments/assets/ec6068cd-e4d6-4d1d-a966-51462269f4c1" />
+
+<img width="1800" height="1004" alt="Image" src="https://github.com/user-attachments/assets/0f743594-2823-47c2-8271-fc3d5293a9bc" />
+
 ## 🚀 できること
 
 ### 💬 チャット機能
