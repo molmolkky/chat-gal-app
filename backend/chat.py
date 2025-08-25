@@ -141,21 +141,3 @@ class ChatService:
             return self.chat_with_rag(messages, query)
         else:
             return self.chat_without_rag(messages)
-
-# 後方互換性のための関数（既存のchat関数を置き換え）
-def chat(messages: List[Dict[str, str]], document_processor=None) -> Dict[str, Any]:
-    """後方互換性のためのラッパー関数"""
-    chat_service = ChatService(document_processor)
-    
-    # 最後のユーザーメッセージを取得
-    user_messages = [msg for msg in messages if msg["role"] == "user"]
-    if not user_messages:
-        return {
-            "success": False,
-            "message": "ユーザーメッセージが見つかりません",
-            "response": None
-        }
-    
-    last_query = user_messages[-1]["content"]
-    
-    return chat_service.generate_response(messages, last_query, use_rag=True)
