@@ -37,15 +37,14 @@ ChatGALは、PDFファイルをアップロードして、その内容につい�
 ### 1. リポジトリをクローン
 
 ```bash
-git clone <repository-url>
-cd ChatGAL
+git clone https://github.com/molmolkky/chat-gal-app
 ```
 
 ### 2. 仮想環境を作成
 
 ```bash
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate
 ```
 
 ### 3. 依存関係をインストール
@@ -59,9 +58,6 @@ pip install -r requirements.txt
 `.env`ファイルを作成して、Azure OpenAIの設定を記入してね💕
 
 ```env
-AZURE_OPENAI_CHAT_ENDPOINT=your_chat_endpoint
-AZURE_OPENAI_CHAT_API_KEY=your_chat_api_key
-AZURE_OPENAI_CHAT_API_VERSION=your_chat_api_version
 AZURE_OPENAI_EMBEDDING_ENDPOINT=your_embedding_endpoint
 AZURE_OPENAI_EMBEDDING_API_KEY=your_embedding_api_key
 AZURE_OPENAI_EMBEDDING_API_VERSION=your_embedding_api_version
@@ -80,19 +76,20 @@ streamlit run app.py
 
 ## 📁 プロジェクト構成
 
-```
+```tree
 ChatGAL/
-├── 🎀 app.py                 # メインアプリ
-├── ⚙️ config.py              # 設定ファイル
-├── 📋 requirements.txt       # 依存関係
+├── app.py                 # メインアプリ
+├── config.py              # 設定ファイル
+├── requirements.txt       # 依存関係
+├── .env                      # 環境変数設定
 ├── backend/                  # バックエンド処理
-│   ├── 💬 chat.py           # チャット機能
-│   ├── 📤 upload.py         # アップロード処理
-│   └── 💯 evaluation.py     # 評価機能
+│   ├── chat.py           # チャット機能
+│   ├── upload.py         # アップロード処理
+│   └── evaluation.py     # 評価機能
 ├── ui/                       # UI コンポーネント
-│   ├── 💌 chat_ui.py        # チャットUI
-│   ├── 📚 upload_ui.py      # アップロードUI
-│   └── 📊 evaluation_ui.py  # 評価UI
+│   ├── chat_ui.py        # チャットUI
+│   ├── upload_ui.py      # アップロードUI
+│   └── evaluation_ui.py  # 評価UI
 └── pages/                    # Streamlitページ
     ├── 1_chat_page.py       # チャットページ
     ├── 2_upload_page.py     # アップロードページ
@@ -103,7 +100,7 @@ ChatGAL/
 
 ### Step 1: 資料をアップ 📚
 
-1. **資料アップ**タブに移動
+1. **資料アップ**ページに移動
 2. PDFファイルを選択してアップロード
 3. 処理完了まで待つ（ちょっと時間かかるかも💦）
 
@@ -122,7 +119,7 @@ ChatGAL/
 ## 🔧 技術スタック
 
 - **Frontend**: Streamlit 🌟
-- **LLM**: Azure OpenAI GPT-4 🧠
+- **LLM**: Azure OpenAI GPT4.1 🧠
 - **Embeddings**: Azure OpenAI text-embedding-3-large 📊
 - **Vector Store**: LangChain InMemoryVectorStore 💾
 - **Evaluation**: RAGAS 📈
@@ -134,7 +131,6 @@ ChatGAL/
 
 - システムプロンプトでギャル語に変換
 - 絵文字たっぷりで楽しい会話
-- 「ギャル風に答えるね」みたいな前置きなし
 
 ### 🔍 スマートRAG
 
@@ -156,7 +152,7 @@ ChatGAL/
 
 ## 🤝 コントリビューション
 
-プルリクエスト大歓迎〜💕 
+プルリクエスト大歓迎〜💕
 バグ見つけたら遠慮なく教えてね🐛
 
 ## 📄 ライセンス
