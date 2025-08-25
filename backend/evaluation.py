@@ -15,7 +15,7 @@ from ragas.metrics import (
     answer_relevancy
 )
 
-from config import llm, embedding
+from config_manager import config_manager
 
 @dataclass
 class ChatEvaluation:
@@ -33,6 +33,8 @@ class ChatEvaluation:
 
 class EvaluationService:
     def __init__(self):
+        llm = config_manager.get_llm()
+        embedding = config_manager.get_embedding()
         self.llm_wrapper = LangchainLLMWrapper(llm)
         self.embeddings_wrapper = LangchainEmbeddingsWrapper(embedding)
         

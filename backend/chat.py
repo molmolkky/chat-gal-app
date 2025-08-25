@@ -6,11 +6,12 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from backend.evaluation import evaluation_service
 from backend.utils.clean_text_for_llm import clean_text_for_llm
-from config import llm
+from config_manager import config_manager
 
 class ChatService:
     def __init__(self, document_processor=None):
         self.document_processor = document_processor
+        self.llm = config_manager.get_llm()
         
     def format_messages_to_prompt(self, messages: List[Dict[str, str]]) -> ChatPromptTemplate:
         """メッセージリストをChatPromptTemplateに変換"""
@@ -33,7 +34,7 @@ class ChatService:
                 "context": retriever | format_docs,
                 "question": RunnablePassthrough(),
             }
-            | llm
+            | self.llm
             | StrOutputParser()
         )
         
@@ -79,7 +80,7 @@ class ChatService:
             prompt = self.format_messages_to_prompt(chat_messages)
             
             # LLMで応答生成
-            response = llm.invoke(prompt.format_messages())
+            response = self.llm.invoke(prompt.format_messages())
             ai_response = response.content if hasattr(response, 'content') else str(response)
             
             # 評価用データを自動収集
@@ -125,7 +126,7 @@ class ChatService:
             prompt = self.format_messages_to_prompt(chat_messages)
             
             # LLMで応答生成
-            response = llm.invoke(prompt.format_messages())
+            response = self.llm.invoke(prompt.format_messages())
             
             return {
                 "success": True,

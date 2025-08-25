@@ -8,22 +8,26 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain.schema import Document
 
-from config import embedding
+from config_manager import config_manager
 
 class DocumentProcessor:
     def __init__(self):
-        self.embedding = embedding
+        self.embedding = None
         self.vectorstore = None
         self.retriever = None
         self.processed_files = []
         
     def initialize_vectorstore(self):
         """ベクトルストアを初期化"""
+        self.embedding = config_manager.get_embedding()
+        if not self.embedding:
+            raise ValueError("Embedding model is not configured")
+        
         self.vectorstore = InMemoryVectorStore(self.embedding)
         self.retriever = self.vectorstore.as_retriever(
             search_type="similarity",
             search_kwargs={
-                "k": 8,
+                "k": 5,
                 "score_threshold": 0.3
             }
         )
