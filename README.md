@@ -22,7 +22,7 @@ ChatGALは、PDFファイルをアップロードして、その内容につい�
 ### 📤 資料アップロード
 
 - 複数のPDFファイルを一気にアップ可能💪
-- ベクトルDBに自動で保存しちゃう✨
+- ローカルのベクトルDBに自動で保存しちゃう✨
 - ファイル情報もバッチリ管理
 
 ### 💯 性能評価
@@ -62,8 +62,14 @@ pip install -r requirements.txt
 AZURE_OPENAI_CHAT_ENDPOINT=your_chat_endpoint
 AZURE_OPENAI_CHAT_API_KEY=your_chat_api_key
 AZURE_OPENAI_CHAT_API_VERSION=your_chat_api_version
+AZURE_OPENAI_EMBEDDING_ENDPOINT=your_embedding_endpoint
 AZURE_OPENAI_EMBEDDING_API_KEY=your_embedding_api_key
 AZURE_OPENAI_EMBEDDING_API_VERSION=your_embedding_api_version
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME=your_embedding_deployment_name
+AZURE_OPENAI_CHAT_ENDPOINT=your_chat_endpoint
+AZURE_OPENAI_CHAT_API_KEY=your_chat_api_key
+AZURE_OPENAI_CHAT_API_VERSION=your_chat_api_version
+AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=your_chat_deployment_name
 ```
 
 ### 5. アプリを起動
