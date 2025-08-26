@@ -18,14 +18,15 @@ class ConfigManager:
         # 設定方法の選択
         config_method = st.sidebar.radio(
             "設定方法を選んでね〜💕",
-            ["環境変数から読み込み", "手動で入力"],
-            help="環境変数(.env)があれば自動で読み込むよ〜"
+            ["手動で入力", "環境変数から読み込み",],
+            help="Azure OpenAIのモデルを設定するよ〜",
+            captions=["Azure OpenAIの値を設定してね", ".envファイルをおいてローカルで立ち上げてね"]
         )
         
-        if config_method == "環境変数から読み込み":
-            return self._load_from_env()
-        else:
+        if config_method == "手動で入力":
             return self._load_from_sidebar()
+        else:
+            return self._load_from_env()
     
     def _load_from_env(self):
         """環境変数から設定を読み込み"""
@@ -73,7 +74,7 @@ class ConfigManager:
     
     def _load_from_sidebar(self):
         """サイドバーから手動入力で設定"""
-        st.sidebar.subheader("📝 Embedding設定")
+        st.sidebar.subheader("📝 埋め込みモデル設定")
         
         # セッション状態で入力値を保持
         if "azure_config" not in st.session_state:
@@ -84,56 +85,54 @@ class ConfigManager:
         
         # Embedding設定
         embedding_endpoint = st.sidebar.text_input(
-            "Embedding Endpoint",
+            "埋め込みモデルエンドポイント",
             value=st.session_state.azure_config.get("embedding_endpoint", ""),
-            help="Azure OpenAI Embeddingのエンドポイント"
+            help="https://sample.openai.azure.com/"
         )
         
         embedding_api_key = st.sidebar.text_input(
-            "Embedding API Key",
+            "埋め込みモデルAPIキー",
             value=st.session_state.azure_config.get("embedding_api_key", ""),
-            type="password",
-            help="Azure OpenAI EmbeddingのAPIキー"
+            type="password"
         )
         
         embedding_api_version = st.sidebar.text_input(
-            "Embedding API Version",
+            "埋め込みモデルAPIバージョン",
             value=st.session_state.azure_config.get("embedding_api_version", ""),
-            help="APIバージョン（例: 2024-02-01）"
+            help="2023-05-15"
         )
         
         embedding_deployment = st.sidebar.text_input(
-            "Embedding Deployment Name",
+            "埋め込みモデルデプロイ名",
             value=st.session_state.azure_config.get("embedding_deployment", ""),
-            help="Embeddingモデルのデプロイメント名"
+            help="sample-embedding-3-large"
         )
         
-        st.sidebar.subheader("💬 Chat設定")
+        st.sidebar.subheader("💬 チャットモデル設定")
         
         # Chat設定
         chat_endpoint = st.sidebar.text_input(
-            "Chat Endpoint",
+            "チャットモデルエンドポイント",
             value=st.session_state.azure_config.get("chat_endpoint", ""),
-            help="Azure OpenAI Chatのエンドポイント"
+            help="https://sample.openai.azure.com/"
         )
         
         chat_api_key = st.sidebar.text_input(
-            "Chat API Key",
+            "チャットモデルAPIキー",
             value=st.session_state.azure_config.get("chat_api_key", ""),
-            type="password",
-            help="Azure OpenAI ChatのAPIキー"
+            type="password"
         )
         
         chat_api_version = st.sidebar.text_input(
-            "Chat API Version",
+            "チャットモデルAPIバージョン",
             value=st.session_state.azure_config.get("chat_api_version", ""),
-            help="APIバージョン（例: 2024-02-01）"
+            help="2025-01-01-preview"
         )
         
         chat_deployment = st.sidebar.text_input(
-            "Chat Deployment Name",
+            "チャットモデルデプロイ名",
             value=st.session_state.azure_config.get("chat_deployment", ""),
-            help="Chatモデルのデプロイメント名"
+            help="sample-gpt-4.1"
         )
         
         # 設定を保存
