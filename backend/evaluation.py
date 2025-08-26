@@ -33,11 +33,6 @@ class ChatEvaluation:
 
 class EvaluationService:
     def __init__(self):
-        llm = config_manager.get_llm()
-        embedding = config_manager.get_embedding()
-        self.llm_wrapper = LangchainLLMWrapper(llm)
-        self.embeddings_wrapper = LangchainEmbeddingsWrapper(embedding)
-        
         # 使用可能なメトリクス
         self.available_metrics = {
             'context_precision': context_precision,
@@ -45,6 +40,19 @@ class EvaluationService:
             'faithfulness': faithfulness,
             'answer_relevancy': answer_relevancy
         }
+    
+    def get_wrappers(self):
+        """ラッパーを取得"""
+        llm = config_manager.get_llm()
+        embedding = config_manager.get_embedding()
+        
+        if not llm or not embedding:
+            raise ValueError("LLM or Embedding is not configured")
+        
+        llm_wrapper = LangchainLLMWrapper(llm)
+        embeddings_wrapper = LangchainEmbeddingsWrapper(embedding)
+        
+        return llm_wrapper, embeddings_wrapper
     
     def add_chat_for_evaluation(self, question: str, answer: str, contexts: List[str], source_files: List[str]):
         """チャット結果を評価用に追加"""
@@ -81,10 +89,13 @@ class EvaluationService:
             if not metrics:
                 return evaluation_item
             
+            # ラッパーを取得
+            llm_wrapper, embeddings_wrapper = self.get_wrappers()
+            
             result = evaluate(
                 dataset,
-                llm=self.llm_wrapper,
-                embeddings=self.embeddings_wrapper,
+                llm=llm_wrapper,
+                embeddings=embeddings_wrapper,
                 metrics=metrics,
             )
             

@@ -1,4 +1,4 @@
-# chat_backend.py
+# backend/chat.py
 from typing import List, Dict, Any, Optional
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
@@ -11,8 +11,11 @@ from config_manager import config_manager
 class ChatService:
     def __init__(self, document_processor=None):
         self.document_processor = document_processor
-        self.llm = config_manager.get_llm()
         
+    def get_llm(self):
+        """LLMインスタンスを取得"""
+        return config_manager.get_llm()
+    
     def format_messages_to_prompt(self, messages: List[Dict[str, str]]) -> ChatPromptTemplate:
         """メッセージリストをChatPromptTemplateに変換"""
         prompts = []
@@ -29,12 +32,13 @@ class ChatService:
         def format_docs(docs):
             return "\n\n".join(doc.page_content for doc in docs)
         
+        llm = self.get_llm()
         rag_chain = (
             {
                 "context": retriever | format_docs,
                 "question": RunnablePassthrough(),
             }
-            | self.llm
+            | llm
             | StrOutputParser()
         )
         
@@ -43,7 +47,7 @@ class ChatService:
     def chat_with_rag(self, messages: List[Dict[str, str]], query: str) -> Dict[str, Any]:
         """RAGを使用してチャット応答を生成"""
         try:
-            if not self.document_processor or not self.document_processor.retriever:
+            if not self.document_processor or not self.document_processor.get_stats()['has_vectorstore']:
                 return {
                     "success": False,
                     "message": "ベクトルストアが初期化されていません",
@@ -80,7 +84,8 @@ class ChatService:
             prompt = self.format_messages_to_prompt(chat_messages)
             
             # LLMで応答生成
-            response = self.llm.invoke(prompt.format_messages())
+            llm = self.get_llm()
+            response = llm.invoke(prompt.format_messages())
             ai_response = response.content if hasattr(response, 'content') else str(response)
             
             # 評価用データを自動収集
@@ -113,7 +118,6 @@ class ChatService:
     def chat_without_rag(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
         """RAGを使用せずにチャット応答を生成"""
         try:
-            # プロンプトを作成
             # システムプロンプトを作成
             system_message = f"あなたは質問応答のアシスタントで、質問に対して日本のギャルのように簡単な言葉を使って説明します。絵文字もたくさん使ってください。「ギャル風に答えるね」といった前置きは不要です。いきなりギャルの言葉遣いで回答してください。"
             
@@ -126,7 +130,8 @@ class ChatService:
             prompt = self.format_messages_to_prompt(chat_messages)
             
             # LLMで応答生成
-            response = self.llm.invoke(prompt.format_messages())
+            llm = self.get_llm()
+            response = llm.invoke(prompt.format_messages())
             
             return {
                 "success": True,
