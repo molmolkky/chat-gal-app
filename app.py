@@ -1,8 +1,12 @@
 # app.py
 import streamlit as st
+from config_manager import config_manager
 
 # アプリ全体のタブアイコン＆タイトル（おすすめ）
 st.set_page_config(page_title="ChatGAL", page_icon="🎀")
+
+# サイドバーで設定を表示
+config_ready = config_manager.render_sidebar_config()
 
 # Streamlitアプリのタイトル設定
 st.title("🎀✨ ChatGAL ✨🎀")
