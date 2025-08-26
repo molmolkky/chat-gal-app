@@ -86,7 +86,6 @@ class ConfigManager:
         embedding_endpoint = st.sidebar.text_input(
             "Embedding Endpoint",
             value=st.session_state.azure_config.get("embedding_endpoint", ""),
-            type="password",
             help="Azure OpenAI Embeddingのエンドポイント"
         )
         
@@ -115,7 +114,6 @@ class ConfigManager:
         chat_endpoint = st.sidebar.text_input(
             "Chat Endpoint",
             value=st.session_state.azure_config.get("chat_endpoint", ""),
-            type="password",
             help="Azure OpenAI Chatのエンドポイント"
         )
         
