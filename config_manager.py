@@ -78,6 +78,9 @@ class ConfigManager:
         # セッション状態で入力値を保持
         if "azure_config" not in st.session_state:
             st.session_state.azure_config = {}
+
+        if "connection_tested" not in st.session_state:
+            st.session_state.connection_tested = False
         
         # Embedding設定
         embedding_endpoint = st.sidebar.text_input(
@@ -148,7 +151,7 @@ class ConfigManager:
         })
         
         # 接続テストボタン
-        if all(var for var in st.session_state.azure_config.values()):
+        if all(var for var in st.session_state.azure_config.values()) and st.session_state.connection_tested == False:
             if st.sidebar.button("🔌 接続テスト", type="primary"):
                 return self._test_connection()
         
@@ -177,12 +180,16 @@ class ConfigManager:
                     temperature=0
                 )
                 
-                st.sidebar.success("✅ テストしてみて〜")
+                if st.session_state.connection_tested:
+                    st.sidebar.success("✅ 接続テスト済みだよ〜")
+                else:
+                    st.sidebar.success("✅ テストしてみて〜")
                 return True
                 
             except Exception as e:
                 st.sidebar.error(f"❌ 設定エラー: {str(e)}")
                 return False
+        
         else:
             st.sidebar.warning("⚠️ 全ての項目を入力してね〜")
             return False
@@ -191,6 +198,10 @@ class ConfigManager:
         """接続テスト"""
         try:
             config = st.session_state.azure_config
+
+            # サイドバー内にプレースホルダーを作成
+            status_placeholder = st.sidebar.empty()
+            status_placeholder.info("🔄 接続テスト中...")
             
             # Embeddingテスト
             test_embedding = AzureOpenAIEmbeddings(
@@ -211,24 +222,32 @@ class ConfigManager:
                 temperature=0
             )
             
-            # 簡単なテスト実行
-            with st.spinner("接続テスト中..."):
-                # Embeddingテスト
-                test_embedding.embed_query("test")
-                
-                # LLMテスト
-                test_llm.invoke("Hello")
+            # Embeddingテスト
+            test_embedding.embed_query("test")
             
-            st.sidebar.success("🎉 接続テスト成功〜！")
+            # LLMテスト
+            test_llm.invoke("Hello")
+            
+            # 成功メッセージに更新
+            status_placeholder.success("🎉 接続テスト成功〜！")
             
             # 成功したら設定を保存
             self.embedding = test_embedding
             self.llm = test_llm
+
+            # 接続成功状態を保存
+            st.session_state.connection_tested = True
             
             return True
             
         except Exception as e:
-            st.sidebar.error(f"❌ 接続テスト失敗: {str(e)}")
+            # エラーメッセージに更新
+            if 'status_placeholder' in locals():
+                status_placeholder.error(f"❌ 接続テスト失敗: {str(e)}")
+            else:
+                st.sidebar.error(f"❌ 接続テスト失敗: {str(e)}")
+            # 接続失敗状態を保存
+            st.session_state.connection_tested = False
             return False
     
     def is_configured(self):
