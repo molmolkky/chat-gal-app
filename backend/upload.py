@@ -63,7 +63,7 @@ class DocumentProcessor:
         st.session_state.retriever = st.session_state.vectorstore.as_retriever(
             search_type="similarity",
             search_kwargs={
-                "k": 5,
+                "k": 10,
                 "score_threshold": 0.3
             }
         )
