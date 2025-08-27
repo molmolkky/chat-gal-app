@@ -1,5 +1,6 @@
 import streamlit as st
 from backend.upload import document_processor
+from config_manager import config_manager
 
 def render_search_settings():
     st.sidebar.header("🔍 検索設定")
@@ -22,12 +23,18 @@ def render_search_settings():
     has_changes = (k_value != current_params['k'])
 
     if st.sidebar.button("✅ 設定を適用", type="primary", disabled=not has_changes):
-        apply_search_settings(k_value)
-        st.session_state.search_params = {'k': k_value}
+        if config_manager.is_configured():
+            apply_search_settings(k_value)
+            st.session_state.search_params = {'k': k_value}
+        else:
+            st.sidebar.error("⚠️ Azure OpenAI設定を先に行ってね")
 
 def apply_search_settings(k, silent=False):
     """検索設定を適用"""
     try:
+        if not st.session_state.retriever:
+            document_processor.initialize_vectorstore()
+
         document_processor.update_retriever_params(k=k)
         
         if not silent:
@@ -35,4 +42,4 @@ def apply_search_settings(k, silent=False):
             # st.rerun()
         
     except Exception as e:
-        st.error(f"❌ 設定の更新に失敗しちゃった💦: {str(e)}")
+        st.sidebar.error(f"❌ 設定の更新に失敗しちゃった💦: {str(e)}")
