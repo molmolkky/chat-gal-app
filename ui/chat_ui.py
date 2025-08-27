@@ -26,7 +26,7 @@ class ChatUI:
         if context_docs and st.session_state.get("show_context", False):
             with st.expander("📚 参考にした資料だよ〜", expanded=False):
                 for i, doc in enumerate(context_docs):
-                    st.write(f"**資料 {i+1}** (出典: {doc.metadata.get('source_file', '不明')})")
+                    st.write(f"**資料 {i+1}** (出典: {doc.metadata.get('source_file', '不明')}, {doc.metadata.get('page_label', '不明')}ページ)")
                     # 文書の内容を表示（長すぎる場合は切り詰める）
                     content = doc.page_content
                     if len(content) > 500:
@@ -102,7 +102,10 @@ class ChatUI:
             st.session_state.show_context = st.checkbox(
                 "📚 参考資料も見る？", 
                 value=st.session_state.get("show_context", False),
-                help="AIが参考にした資料も一緒に表示するよ💕"
+                help=(
+                    "AIが参考にした資料も一緒に表示するよ💕"
+                    "でも新しいメッセージを送ったり、他のアクションをすると最新の資料が更新されちゃうから気をつけて〜"
+                )
             )
     
     def render_chat_status(self):
@@ -111,6 +114,7 @@ class ChatUI:
             stats = self.document_processor.get_stats()
             if stats['has_vectorstore']:
                 st.success(f"✨ スマートモード: {stats['total_files']}個のファイルを参照中💎")
+                st.session_state.show_context = True
             else:
                 st.warning("💭 ノーマルモード: 資料なしでお話し中")
         else:
