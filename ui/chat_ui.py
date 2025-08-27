@@ -46,6 +46,7 @@ class ChatUI:
         # AIの応答を生成
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
+            message_placeholder.status("え〜っと...", state="running")
             
             try:
                 # チャットサービスで応答を生成
