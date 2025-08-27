@@ -53,19 +53,26 @@ class DocumentProcessor:
             'file_count': len(st.session_state.processed_files)
         }
         
+    def update_retriever_params(self, k):
+        """リトリーバーのパラメーターを更新"""
+        st.session_state.retriever = st.session_state.vectorstore.as_retriever(
+            search_type='similarity',
+            search_kwargs={"k": k}
+        )
+    
     def initialize_vectorstore(self):
         """ベクトルストアを初期化"""
         embedding = config_manager.get_embedding()
         if not embedding:
             raise ValueError("Embedding model is not configured")
         
+        # セッション状態から設定を取得
+        params = st.session_state['search_params']
+
         st.session_state.vectorstore = InMemoryVectorStore(embedding)
         st.session_state.retriever = st.session_state.vectorstore.as_retriever(
             search_type="similarity",
-            search_kwargs={
-                "k": 10,
-                "score_threshold": 0.3
-            }
+            search_kwargs={"k": params['k']}
         )
     
     def load_pdf(self, uploaded_file) -> List[Document]:
@@ -189,20 +196,28 @@ class DocumentProcessor:
                 'message': f'Error processing files: {str(e)}'
             }
     
-    def search_documents(self, query: str, k: int = 3) -> List[Document]:
+    def search_documents(self, query: str) -> List[Document]:
         """ドキュメントを検索"""
         if not st.session_state.retriever:
+            print("❌ Retriever is None")
             return []
         
         try:
-            return st.session_state.retriever.invoke(query)
+            result = st.session_state.retriever.invoke(query)
+            return result
+        
         except Exception as e:
-            print(f"Search error: {e}")
+            # より詳細なエラー情報を表示
+            import traceback
+            print(f"❌ Search error: {str(e)}")
+            print(f"❌ Error type: {type(e).__name__}")
+            print(f"❌ Traceback:")
+            traceback.print_exc()
             return []
     
-    def get_context_from_search(self, query: str, k: int = 3) -> str:
+    def get_context_from_search(self, query: str) -> str:
         """検索結果から文脈を取得"""
-        docs = self.search_documents(query, k)
+        docs = self.search_documents(query)
         return "\n".join([doc.page_content for doc in docs])
     
     def clear_vectorstore(self):
