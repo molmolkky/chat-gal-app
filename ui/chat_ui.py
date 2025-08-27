@@ -112,7 +112,7 @@ class ChatUI:
         """チャットの状態を表示"""
         if self.document_processor:
             stats = self.document_processor.get_stats()
-            if stats['has_vectorstore']:
+            if stats['processed_files']:
                 st.success(f"✨ スマートモード: {stats['total_files']}個のファイルを参照中💎")
                 st.session_state.show_context = True
             else:
