@@ -1,12 +1,40 @@
 # chat_ui.py
 import streamlit as st
-from typing import List, Dict, Any
+import random
+from typing import List
 from backend.chat import ChatService
 
 class ChatUI:
     def __init__(self, document_processor=None):
         self.chat_service = ChatService(document_processor)
         self.document_processor = document_processor
+
+    def get_contextual_thinking_message(self, has_documents: bool = False) -> str:
+        """状況に応じた思考中メッセージを取得"""
+        if has_documents:
+            doc_messages = [
+                "資料を確認してるよ〜📚",
+                "文書を読み込み中...",
+                "情報を探してるね〜🔍",
+                "資料と照らし合わせてるよ✨",
+                "ドキュメントをチェック中〜📄",
+                "参考資料を見てるよ〜💎",
+                "文書から答えを探してる〜🤓",
+                "資料を整理中だよ〜📋"
+            ]
+            return random.choice(doc_messages)
+        else:
+            general_messages = [
+                "え〜っと...",
+                "ちょっと待ってね〜",
+                "考え中だよ〜💭",
+                "うーん、どうかな？",
+                "ふむふむ...",
+                "んー、そうだなぁ...",
+                "ちょっと考えさせて〜",
+                "頭をひねってるよ〜🤔"
+            ]
+            return random.choice(general_messages)
     
     def initialize_session_state(self):
         """セッション状態を初期化"""
@@ -46,7 +74,15 @@ class ChatUI:
         # AIの応答を生成
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
-            message_placeholder.status("え〜っと...", state="running")
+            # 文書があるかどうかを判定
+            has_documents = False
+            if self.document_processor:
+                stats = self.document_processor.get_stats()
+                has_documents = bool(stats.get('processed_files', []))
+            
+            # 状況に応じた思考中メッセージを表示
+            thinking_message = self.get_contextual_thinking_message(has_documents)
+            message_placeholder.status(thinking_message, state="running")
             
             try:
                 # チャットサービスで応答を生成
