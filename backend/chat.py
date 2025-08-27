@@ -47,10 +47,10 @@ class ChatService:
     def chat_with_rag(self, messages: List[Dict[str, str]], query: str) -> Dict[str, Any]:
         """RAGを使用してチャット応答を生成"""
         try:
-            if not self.document_processor or not self.document_processor.get_stats()['has_vectorstore']:
+            if not self.document_processor or self.document_processor.get_stats()['total_files'] == 0:
                 return {
                     "success": False,
-                    "message": "ベクトルストアが初期化されていません",
+                    "message": "資料がありません。",
                     "response": None,
                     "context_docs": []
                 }
@@ -151,7 +151,7 @@ class ChatService:
     
     def generate_response(self, messages: List[Dict[str, str]], query: str, use_rag: bool = True) -> Dict[str, Any]:
         """統合されたレスポンス生成メソッド"""
-        if use_rag and self.document_processor and self.document_processor.get_stats()['has_vectorstore']:
+        if use_rag and self.document_processor and self.document_processor.get_stats()['processed_files']:
             return self.chat_with_rag(messages, query)
         else:
             return self.chat_without_rag(messages)

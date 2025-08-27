@@ -76,7 +76,7 @@ def show_existing_documents():
     
     stats = document_processor.get_stats()
     
-    if stats['has_vectorstore'] and stats['total_files'] > 0:
+    if stats['processed_files'] and stats['total_files'] > 0:
         st.success(f"✨ {stats['total_files']}個のファイルがあるよ〜")
         
         # ファイル詳細を表示
@@ -161,7 +161,7 @@ def database_management_section():
     
     stats = document_processor.get_stats()
     
-    if stats['has_vectorstore']:
+    if stats['processed_files']:
         st.warning("⚠️ 下のボタンを押すと、全部の資料が消えちゃうよ〜")
 
         # セッション状態で削除確認フラグを管理

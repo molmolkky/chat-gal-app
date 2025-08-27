@@ -229,7 +229,6 @@ class DocumentProcessor:
     def get_stats(self) -> dict:
         """統計情報を取得"""
         return {
-            'has_vectorstore': st.session_state.vectorstore is not None,
             'processed_files': st.session_state.processed_files,
             'total_files': len(st.session_state.processed_files)
         }
