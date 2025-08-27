@@ -228,6 +228,10 @@ class DocumentProcessor:
     
     def get_stats(self) -> dict:
         """統計情報を取得"""
+        # 常に存在チェック
+        if 'processed_files' not in st.session_state:
+            st.session_state.processed_files = []
+            
         return {
             'processed_files': st.session_state.processed_files,
             'total_files': len(st.session_state.processed_files)
