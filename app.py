@@ -1,6 +1,7 @@
 # app.py
 import streamlit as st
 from config_manager import config_manager
+from search_settings import render_search_settings
 
 # アプリ全体のタブアイコン＆タイトル（おすすめ）
 st.set_page_config(
@@ -10,6 +11,7 @@ st.set_page_config(
 )
 
 # サイドバーで設定を表示
+render_search_settings()
 config_ready = config_manager.render_sidebar_config()
 
 # Streamlitアプリのタイトル設定
