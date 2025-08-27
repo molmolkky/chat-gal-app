@@ -2,6 +2,31 @@
 import streamlit as st
 from backend.upload import document_processor
 
+def render_upload():
+    """アップロードタブのUIをレンダリング"""
+    st.header("📚 資料アップしちゃお〜🧚‍♀️")
+
+    info_col, upload_col = st.columns(2)
+    with info_col:
+        # プライバシー情報を表示
+        show_privacy_info()
+        show_usage_guidelines()
+    
+    with upload_col:
+        # PDFアップロード機能
+        upload_pdf_section()
+    
+    st.divider()
+    exist_col, manage_col = st.columns(2)
+
+    with exist_col:
+        # 既存の資料表示
+        show_existing_documents()
+    
+    with manage_col:
+        # データベース管理
+        database_management_section()
+
 def show_privacy_info():
     """プライバシー情報を表示"""
     with st.expander("🔒 プライバシーとセキュリティについて"):
@@ -44,27 +69,6 @@ def show_usage_guidelines():
         超機密文書は避けて、一般的な資料で試してみて
 
     """)
-
-def render_upload():
-    """アップロードタブのUIをレンダリング"""
-    st.header("📚 資料アップしちゃお〜🧚‍♀️")
-
-    # プライバシー情報を表示
-    show_privacy_info()
-    show_usage_guidelines()
-    
-    # 既存の資料表示
-    show_existing_documents()
-    
-    st.divider()
-    
-    # PDFアップロード機能
-    upload_pdf_section()
-    
-    st.divider()
-    
-    # データベース管理
-    database_management_section()
 
 def show_existing_documents():
     """既存のドキュメント一覧を表示"""
